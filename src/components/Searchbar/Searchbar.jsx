@@ -1,24 +1,47 @@
-import React, {Component} from 'react';
-import { Searchbar, SearchForm, SearchFormButton, SearchFormInput } from './Searchbar.styled';
+import React, { Component } from 'react';
+import {
+  Searchbar,
+  SearchForm,
+  SearchFormButton,
+  SearchFormInput,
+  SearchFormButtonSpan,
+} from './Searchbar.styled';
 
 export default class Search extends Component {
+  state = {
+    value: '',
+  };
+
+  handleChange = ({ target: { value } }) => {
+    this.setState({ value });
+  };
+
+  handleSubmit = event => {
+    event.preventDefault();
+    this.props.handleSearch(this.state.value);
+  };
+
   render() {
     return (
-      <Searchbar>
-        <SearchForm className="searchForm" role={Search}>
-          <SearchFormInput
-            type="search"
-            className="searchInput"
-            placeholder="Search"
-            aria-label="Search"
-          />
-          <SearchFormButton className="searchBtn" type="submit">
-            Search
+      <Searchbar className="searchbar">
+        <SearchForm className="searchForm" onSubmit={this.handleSubmit}>
+          <SearchFormButton type="submit" className="searchBtn">
+            <SearchFormButtonSpan className="buttonSpan">
+              Search
+            </SearchFormButtonSpan>
           </SearchFormButton>
+
+          <SearchFormInput
+            className="searchInput"
+            type="search"
+            autoComplete="off"
+            autoFocus
+            placeholder="Search images and photos"
+            onChange={this.handleChange}
+            value={this.state.value}
+          />
         </SearchForm>
       </Searchbar>
     );
   }
 }
-
-
