@@ -20,7 +20,9 @@ export default class ImageGallery extends Component {
         let picture = this.props.images.filter(obj => {
           return obj.id === parseInt(e.target.alt);
         });
-        this.setState({ bigPic: picture[0].largeImageURL });
+        if (picture[0]) {
+          this.setState({ bigPic: picture[0].largeImageURL });
+        }
       }
     });
   }
