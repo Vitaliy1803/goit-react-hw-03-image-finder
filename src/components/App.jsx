@@ -3,6 +3,7 @@ import Search from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery';
 import Loader from './Loader';
 import Button from './Button';
+import axios from 'axios';
 
 export default class App extends Component {
   state = {
@@ -17,33 +18,42 @@ export default class App extends Component {
   };
 
   fetchImg = () => {
-    return fetch(
-      `${this.state.URL}?q=${this.state.query}&page=${this.state.page}&key=${this.state.KEY}&image_type=photo&orientation=horizontal&per_page=12`
-    )
-      .then(res => {
-        if (res.ok) {
-          return res.json();
-        }
-        return Promise.reject(new Error('Failed to find any images'));
+    const { URL, KEY, query, page } = this.state;
+    const perPage = 12; 
+  
+    
+    axios
+      .get(URL, {
+        params: {
+          q: query,
+          page,
+          key: KEY,
+          image_type: 'photo',
+          orientation: 'horizontal',
+          per_page: perPage,
+        },
       })
-      .then(pictures => {
-        if (!pictures.total) {
-          alert('Did find anything, mate');
+      .then(response => {
+        const pictures = response.data.hits;
+        const totalHits = response.data.total;
+  
+        if (!totalHits) {
+          alert('Did not find anything, mate');
         }
-        const selectedProperties = pictures.hits.map(
-          ({ id, largeImageURL, webformatURL }) => {
-            return { id, largeImageURL, webformatURL };
-          }
-        );
-        this.setState(prevState => {
-          return {
-            pictures: [...prevState.pictures, ...selectedProperties],
-            status: 'resolved',
-            totalHits: pictures.total,
-          };
+  
+        const selectedProperties = pictures.map(({ id, largeImageURL, webformatURL }) => {
+          return { id, largeImageURL, webformatURL };
         });
+  
+        this.setState(prevState => ({
+          pictures: [...prevState.pictures, ...selectedProperties],
+          status: 'resolved',
+          totalHits,
+        }));
       })
-      .catch(error => this.setState({ error, status: 'rejected' }));
+      .catch(error => {
+        this.setState({ error, status: 'rejected' });
+      });
   };
 
   handleSearch = query => {
