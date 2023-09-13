@@ -9,16 +9,22 @@ import {
 
 export default class Search extends Component {
   state = {
-    value: '',
+    query: '',
   };
 
-  handleChange = ({ target: { value } }) => {
-    this.setState({ value });
+  handleChange = e => {
+    this.setState({ query: e.target.value.toLowerCase() });
   };
 
   handleSubmit = event => {
     event.preventDefault();
-    this.props.handleSearch(this.state.value);
+    if (this.state.query.trim() === '') {
+      alert('Enter your search query');
+      return;
+    }
+
+    this.props.handleSearch(this.state.query);
+    this.setState({ query: '' });
   };
 
   render() {
@@ -38,7 +44,7 @@ export default class Search extends Component {
             autoFocus
             placeholder="Search images and photos"
             onChange={this.handleChange}
-            value={this.state.value}
+            value={this.state.query}
           />
         </SearchForm>
       </Searchbar>
