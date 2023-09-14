@@ -20,6 +20,10 @@ export default class App extends Component {
   fetchImg = () => {
     const { URL, KEY, query, page } = this.state;
     const perPage = 12; 
+
+    if (this.state.query !== query) {
+      this.setState({ page: 1 });
+    }
   
     
     axios
@@ -58,7 +62,7 @@ export default class App extends Component {
 
   handleSearch = query => {
     console.log(query);
-    this.setState({ query });
+    this.setState({ query, pictures: [], page: 1 });
   };
 
   componentDidUpdate(prevProps, prevState) {
